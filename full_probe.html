@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>全探测变化觉察任务 (Full-Probe Change Detection)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+</head>
+
+<body>
+
+    <!-- 1. 设置与被试信息阶段 -->
+    <div id="setup-phase" class="screen">
+        <div class="card">
+            <h1>实验设置</h1>
+            <p class="subtitle">全探测变化觉察任务 — 请输入被试基本信息</p>
+
+            <form id="setup-form">
+                <div class="form-group">
+                    <label for="subName">姓名 (Name)</label>
+                    <input type="text" id="subName" required>
+                </div>
+                <div class="form-group">
+                    <label for="subGender">性别 (Gender)</label>
+                    <select id="subGender" required>
+                        <option value="">请选择</option>
+                        <option value="男">男</option>
+                        <option value="女">女</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="subAge">年龄 (Age)</label>
+                    <input type="number" id="subAge" required>
+                </div>
+                <div class="form-group">
+                    <label for="subIdCard">身份证号 (ID Card Number)</label>
+                    <input type="text" id="subIdCard" maxlength="18" required>
+                    <small class="form-hint">输入后中间部分将自动掩蔽，仅显示前4位和后6位</small>
+                </div>
+                <div class="form-group">
+                    <label for="subPhone">手机号 (Phone Number)</label>
+                    <input type="tel" id="subPhone" maxlength="11" required>
+                </div>
+                <div class="form-group">
+                    <label for="subjectID">被试编号 (Subject ID — 自动生成)</label>
+                    <input type="text" id="subjectID" readonly placeholder="由身份证后6位 + 手机后4位自动生成">
+                </div>
+                <div class="form-group" style="display: flex; flex-direction: row; align-items: center; gap: 8px;">
+                    <input type="checkbox" id="saveLocal" checked style="width: auto; margin: 0;">
+                    <label for="saveLocal" style="margin: 0; font-weight: normal;">保存数据到本地 (Save to local CSV)</label>
+                </div>
+                <div class="form-group" style="display: flex; flex-direction: row; align-items: center; gap: 8px;">
+                    <input type="checkbox" id="debugMode" style="width: auto; margin: 0;">
+                    <label for="debugMode" style="margin: 0; font-weight: normal;">调试模式 (Debug Mode — 少量试次，跳过休息)</label>
+                </div>
+
+                <button type="button" id="start-btn" class="btn primary">开始实验</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- 2. 指导语阶段（匹配 .m 文件 instruct_image_FullProbe.png 风格：白底+示意图+中文文本） -->
+    <div id="instructions-phase" class="screen hidden match-instruct">
+        <div class="instruct-container">
+            <!-- 示意图：4 面板试次序列（注视点 → 记忆阵列 → 保留间隔 → 全阵列探测） -->
+            <div class="instruct-diagram">
+                <svg viewBox="0 0 620 180" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Panel 1: 注视点 -->
+                    <g transform="translate(0,0)">
+                        <rect x="0" y="0" width="150" height="150" fill="#999999" rx="2"/>
+                        <circle cx="75" cy="75" r="3" fill="#000000"/>
+                        <text x="75" y="175" text-anchor="middle" font-family="Arial" font-size="18" fill="#000">1</text>
+                    </g>
+                    <!-- Panel 2: 记忆阵列（6色块） -->
+                    <g transform="translate(156,0)">
+                        <rect x="0" y="0" width="150" height="150" fill="#999999" rx="2"/>
+                        <circle cx="75" cy="75" r="3" fill="#000000"/>
+                        <rect x="28" y="18" width="20" height="20" fill="#000000"/>   <!-- 黑 -->
+                        <rect x="98" y="18" width="20" height="20" fill="#ff0000"/>   <!-- 红 -->
+                        <rect x="50" y="62" width="20" height="20" fill="#00ff00"/>   <!-- 绿 -->
+                        <rect x="82" y="65" width="20" height="20" fill="#ffffff"/>   <!-- 白 -->
+                        <rect x="22" y="100" width="20" height="20" fill="#0000ff"/>   <!-- 蓝 -->
+                        <rect x="95" y="95" width="20" height="20" fill="#ffff00"/>   <!-- 黄 -->
+                        <text x="75" y="175" text-anchor="middle" font-family="Arial" font-size="18" fill="#000">2</text>
+                    </g>
+                    <!-- Panel 3: 保留间隔（注视点） -->
+                    <g transform="translate(312,0)">
+                        <rect x="0" y="0" width="150" height="150" fill="#999999" rx="2"/>
+                        <circle cx="75" cy="75" r="3" fill="#000000"/>
+                        <text x="75" y="175" text-anchor="middle" font-family="Arial" font-size="18" fill="#000">3</text>
+                    </g>
+                    <!-- Panel 4: 全探测（所有色块重新出现） -->
+                    <g transform="translate(468,0)">
+                        <rect x="0" y="0" width="150" height="150" fill="#999999" rx="2"/>
+                        <circle cx="75" cy="75" r="3" fill="#000000"/>
+                        <rect x="28" y="18" width="20" height="20" fill="#000000"/>   <!-- 黑 -->
+                        <rect x="98" y="18" width="20" height="20" fill="#ff0000"/>   <!-- 红 -->
+                        <rect x="50" y="62" width="20" height="20" fill="#00ff00"/>   <!-- 绿 -->
+                        <rect x="82" y="65" width="20" height="20" fill="#ffffff"/>   <!-- 白 -->
+                        <rect x="22" y="100" width="20" height="20" fill="#0000ff"/>   <!-- 蓝 -->
+                        <rect x="95" y="95" width="20" height="20" fill="#ffff00"/>   <!-- 黄 -->
+                        <text x="75" y="175" text-anchor="middle" font-family="Arial" font-size="18" fill="#000">4</text>
+                    </g>
+                </svg>
+            </div>
+            <!-- 指导语文本（完全匹配 gen_instruct_FullProbe.py 内容） -->
+            <div class="instruct-text">
+                <p class="instruct-title">欢迎参加本次实验！</p>
+                <div class="instruct-body">
+                    <p>记忆阶段您将会看到【4个或6个色块】出现在随机位置</p>
+                    <p>请集中注意力记住所有色块的颜色和位置</p>
+                    <div class="blank-line"></div>
+                    <p>请在探测阶段判断是否与记忆阶段出现的色块【颜色】和【位置】完全一致</p>
+                    <div class="blank-line"></div>
+                    <p>如果您认为完全一致，按【z】键</p>
+                    <p>如果您认为有所变化，按【/】键</p>
+                    <div class="blank-line"></div>
+                    <p>请在保证准确的情况下尽快做出反应</p>
+                    <div class="blank-line"></div>
+                    <p style="font-size:16px;color:#555;">实验共 4 个 block，每个 block 35 个试次（共 140 试次），block 间休息 30 秒</p>
+                    <p style="font-weight:bold;">请仔细阅读指导语，理解后按【SPACE】键【开始练习】</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. 实验进行阶段 -->
+    <div id="experiment-phase" class="screen hidden">
+        <canvas id="expCanvas"></canvas>
+    </div>
+
+    <!-- 4. 休息阶段 -->
+    <div id="break-phase" class="screen hidden">
+        <div class="message-center">
+            <h1>休息一下</h1>
+            <p class="time-remaining" id="break-time">剩余时间: 30</p>
+            <p class="block-progress" id="block-progress">已完成 Block 1 / 4</p>
+        </div>
+    </div>
+
+    <!-- 5. 实验后问卷阶段 -->
+    <div id="questionnaire-phase" class="screen hidden">
+        <div class="card questionnaire-card" id="q-tired">
+            <h1>疲劳度评估</h1>
+            <p>你现在感觉有多累？</p>
+            <p class="scale-desc">1 = 一点也不累， 5 = 非常累</p>
+            <p class="start-hint">请按键盘上的数字 <strong>1 - 5</strong> 进行选择</p>
+        </div>
+        <div class="card questionnaire-card hidden" id="q-attention">
+            <h1>专注度评估</h1>
+            <p>在刚刚的实验中，你有多专注？</p>
+            <p class="scale-desc">1 = 一点也不专注， 5 = 非常专注</p>
+            <p class="start-hint">请按键盘上的数字 <strong>1 - 5</strong> 进行选择</p>
+        </div>
+    </div>
+
+    <!-- 6. 上传/保存数据阶段 -->
+    <div id="upload-phase" class="screen hidden">
+        <div class="message-center">
+            <h1>正在处理数据...</h1>
+            <div class="spinner"></div>
+            <p id="upload-status">请勿关闭浏览器页面</p>
+        </div>
+    </div>
+
+    <!-- 7. 结束阶段 -->
+    <div id="finished-phase" class="screen hidden">
+        <div class="message-center">
+            <h1>实验结束！</h1>
+            <p id="finished-text">感谢您的参与！数据已成功处理。</p>
+            <p class="start-hint">您可以关闭此页面了。</p>
+        </div>
+    </div>
+
+    <script src="full_probe.js"></script>
+</body>
+
+</html>
