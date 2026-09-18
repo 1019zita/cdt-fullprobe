@@ -26,3 +26,7 @@ GitHub Pages 启用后，可从仓库首页对应的 Pages 地址进入；`index
 ## 版本说明
 
 这是 `Web_Version/Full_Probe` 的历史静态版本。发布准备只增加了 Pages 入口、说明文件和忽略规则，没有修改实验条件、trial 数量、随机化、刺激、时序、计分、问卷或数据字段。
+
+## MindProbe/JATOS
+
+迁移分支通过独立 storage adapter 将正式 trial 逐条追加到 JATOS，并在每个 block 写 checkpoint、正常结束写 final。练习数据仍只保留在浏览器内；设备端 XLSX 仍是便利副本。构建和部署说明见 `docs/MINDPROBE_DEPLOYMENT.md`。

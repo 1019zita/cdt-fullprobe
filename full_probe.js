@@ -20,9 +20,6 @@
 //   change=0：所有方块保持原色
 // ============================================================
 
-let supabaseClient = null;
-const SUPABASE_URL = "YOUR_SUPABASE_URL_HERE";
-const SUPABASE_KEY = "YOUR_SUPABASE_ANON_KEY_HERE";
 let p = {};
 let stimData = [];
 let practiceData = [];
@@ -170,12 +167,13 @@ document.getElementById('start-btn').addEventListener('click', async () => {
     seedRandom(p.rndSeed);
 
     try {
-        if (SUPABASE_URL !== "YOUR_SUPABASE_URL_HERE") {
-            supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
-                auth: { persistSession: false }
-            });
-        }
-    } catch (err) { console.error("Supabase init failed", err); }
+        await window.CLTStorage.initializeStorage({ participant: p });
+    } catch (err) {
+        console.error("Storage init failed", err);
+        document.getElementById('finished-text').innerText = '数据存储初始化失败，实验未开始。';
+        switchScreen('finished');
+        return;
+    }
 
     try {
         if (document.documentElement.requestFullscreen) {
@@ -488,7 +486,9 @@ function recordResponse(responseType) {
     trialData.correctResponse = trialData.isChange === 1 ? 1 : 0;
     trialData.accuracy = (trialData.isChange === responseType) ? 1 : 0;
 
-    stimData.push(Object.assign({}, trialData));
+    const completedRow = prepareStorageRow(trialData);
+    stimData.push(completedRow);
+    window.CLTStorage.saveTrial(completedRow);
 
     // ITI
     drawBackground(); drawFixation();
@@ -502,6 +502,11 @@ function recordResponse(responseType) {
 //  Block 间休息
 // ============================================================
 function endBlock() {
+    window.CLTStorage.saveCheckpoint({
+        block: currentBlock,
+        completedTrials: stimData.length
+    });
+
     if (currentBlock < prefs.numBlocks && !prefs.debugMode) {
         switchScreen('break');
         experimentPhase = 'break';
@@ -577,23 +582,23 @@ function handleQuestionnaire(value) {
 //  数据保存
 // ============================================================
 async function finishExperiment() {
+    const completedNormally = p.attention !== undefined;
     switchScreen('upload');
     experimentPhase = 'upload';
 
     let uploadMsg = "";
+    let storageSucceeded = false;
 
-    if (supabaseClient) {
-        try {
-            const { data, error } = await supabaseClient
-                .from('vwm_data').insert(stimData);
-            if (error) throw error;
-            uploadMsg += "数据上传服务器成功。";
-        } catch (error) {
-            console.error("Supabase Error:", error);
-            uploadMsg += "服务器上传失败: " + error.message + "。";
-        }
-    } else {
-        uploadMsg += "未配置服务器上传。";
+    try {
+        const result = await window.CLTStorage.saveFinalResult({
+            trials: stimData,
+            questionnaire: { tired: p.tired, attention: p.attention }
+        });
+        storageSucceeded = true;
+        uploadMsg += result && result.message ? result.message : '数据已保存。';
+    } catch (error) {
+        console.error("Storage Error:", error);
+        uploadMsg += "服务器保存失败: " + error.message + "。";
     }
 
     if (p.saveLocal && stimData.length > 0) {
@@ -605,7 +610,29 @@ async function finishExperiment() {
     document.getElementById('finished-text').innerText = uploadMsg;
     setTimeout(() => { switchScreen('finished'); }, 2000);
 
+    try {
+        await window.CLTStorage.finishExperiment({
+            successful: storageSucceeded && completedNormally,
+            message: completedNormally ? 'Full-Probe completed' : 'Full-Probe ended early'
+        });
+    } catch (error) {
+        console.error('Study finish failed:', error);
+    }
+
     try { if (document.exitFullscreen) document.exitFullscreen(); } catch (e) {}
+}
+
+function prepareStorageRow(row) {
+    return {
+        ...row,
+        subName: p.subName,
+        subGender: p.subGender,
+        subAge: p.subAge,
+        subIdCard: maskIdCard(p.subIdCard),
+        subPhone: p.subPhone,
+        subjectID: p.subjectID,
+        rndSeed: p.rndSeed
+    };
 }
 
 function downloadXLSX() {

@@ -4,3 +4,9 @@ Thumbs.db
 .env
 .env.*
 !.env.example
+build/
+release/
+results/
+result-backups/
+__pycache__/
+*.pyc
