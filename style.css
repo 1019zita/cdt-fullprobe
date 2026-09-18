@@ -1,0 +1,439 @@
+/* style.css */
+:root {
+    --bg-color: rgb(128, 128, 128); /* Psychtoolbox win.gray */
+    --text-main: #ffffff;
+    --text-dim: #cccccc;
+    --card-bg: rgba(40, 40, 40, 0.85);
+    --primary: #4a90e2;
+    --primary-hover: #357abd;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden; /* 防止滚动 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    user-select: none;
+}
+
+/* 屏幕切换 */
+.screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* 卡片样式 (用于表单、说明、问卷) */
+.card {
+    background-color: var(--card-bg);
+    padding: 40px 60px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    backdrop-filter: blur(10px);
+    max-width: 600px;
+    width: 100%;
+    text-align: center;
+}
+
+.card h1 {
+    font-size: 28px;
+    margin-bottom: 10px;
+    font-weight: 600;
+}
+
+.subtitle {
+    color: var(--text-dim);
+    margin-bottom: 30px;
+    font-size: 14px;
+}
+
+/* 表单样式 */
+.form-group {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-dim);
+}
+
+.form-group input, 
+.form-group select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #555;
+    background-color: #333;
+    color: white;
+    border-radius: 6px;
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    transition: border-color 0.2s;
+}
+
+.form-group input:focus, 
+.form-group select:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+.form-group input[readonly] {
+    background-color: #2a2a2a;
+    color: #aaa;
+    cursor: not-allowed;
+}
+
+.form-hint {
+    display: block;
+    margin-top: 6px;
+    font-size: 12px;
+    color: #888;
+}
+
+.divider {
+    border: 0;
+    height: 1px;
+    background-color: #555;
+    margin: 30px 0;
+}
+
+.btn {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s;
+    font-family: 'Inter', sans-serif;
+}
+
+.btn.primary {
+    background-color: var(--primary);
+    color: white;
+    margin-top: 10px;
+}
+
+.btn.primary:hover {
+    background-color: var(--primary-hover);
+}
+
+.btn.primary:active {
+    transform: scale(0.98);
+}
+
+/* 指导语样式 — 匹配 MATLAB .m 文件调用的 instruct_image.png 风格 */
+.instructions-card {
+    text-align: left;
+}
+
+.instructions-card h1 {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.instruction-steps p {
+    font-size: 18px;
+    margin-bottom: 15px;
+    line-height: 1.5;
+}
+
+.key-bindings {
+    margin-top: 30px;
+    background-color: rgba(0,0,0,0.2);
+    padding: 20px;
+    border-radius: 8px;
+}
+
+.key-bindings p {
+    font-size: 18px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.key {
+    background-color: #e0e0e0;
+    color: #333;
+    padding: 4px 12px;
+    border-radius: 4px;
+    font-family: monospace;
+    font-weight: bold;
+    box-shadow: 0 2px 0 #999;
+}
+
+.start-hint {
+    margin-top: 40px;
+    text-align: center;
+    font-size: 20px;
+    color: #ffeb3b; /* 醒目黄色 */
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { opacity: 0.7; }
+    50% { opacity: 1; }
+    100% { opacity: 0.7; }
+}
+
+/* ===== 新版指导语界面（白底 + 示意图 + 中文文本）匹配 .m 文件 instruct_image.png ===== */
+#instructions-phase.match-instruct {
+    background-color: #ffffff !important;
+    overflow-y: auto;
+    padding: 10px 0 30px 0;
+}
+
+#instructions-phase.match-instruct .instruct-container {
+    width: 1024px;
+    max-width: 95vw;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#instructions-phase.match-instruct .instruct-diagram {
+    width: 620px;
+    max-width: 95vw;
+    margin-top: 15px;
+}
+
+#instructions-phase.match-instruct .instruct-diagram svg {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+#instructions-phase.match-instruct .instruct-text {
+    width: 100%;
+    text-align: center;
+    color: #000000;
+    font-family: 'Microsoft YaHei', 'SimHei', 'PingFang SC', sans-serif;
+    margin-top: 15px;
+}
+
+#instructions-phase.match-instruct .instruct-title {
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+#instructions-phase.match-instruct .instruct-body p {
+    font-size: 20px;
+    line-height: 1.65;
+    margin: 3px 0;
+}
+
+#instructions-phase.match-instruct .instruct-body .blank-line {
+    height: 14px;
+}
+
+/* 画布阶段 */
+#experiment-phase {
+    background-color: var(--bg-color); /* 确保背景是纯正的 128 灰 */
+}
+
+#expCanvas {
+    display: block;
+}
+
+/* 休息与消息中心 */
+.message-center {
+    text-align: center;
+}
+
+.message-center h1 {
+    font-size: 48px;
+    margin-bottom: 20px;
+}
+
+.time-remaining {
+    font-size: 32px;
+    color: #ff5252; /* 红色警告 */
+    margin-bottom: 20px;
+}
+
+.block-progress {
+    font-size: 24px;
+    color: white;
+}
+
+/* 问卷样式 */
+.questionnaire-card h1 {
+    margin-bottom: 20px;
+}
+
+.questionnaire-card p {
+    font-size: 20px;
+    margin-bottom: 15px;
+}
+
+.scale-desc {
+    color: #aaa !important;
+    font-size: 16px !important;
+    margin-bottom: 40px !important;
+}
+
+/* 加载动画 */
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid rgba(255,255,255,0.2);
+    border-top: 5px solid var(--primary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 30px auto;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* ============================================================
+   CLT 专用：Block 间休息界面
+   匹配 .m 文件 gen_text_screen.py 的 block_countdown_bg / block_wait 画面
+   （白底黑字、居中；倒计时结束前显示秒数，结束后显示等待提示）
+   ============================================================ */
+#break-phase.match-break {
+    background-color: #ffffff !important;
+    font-family: 'Microsoft YaHei', 'SimHei', 'PingFang SC', sans-serif;
+    flex-direction: column;
+}
+
+#break-phase.match-break .rest-stack {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    width: 100%;
+}
+
+#break-phase.match-break .rest-acc {
+    font-size: 42px;
+    color: #000000;
+}
+
+#break-phase.match-break .rest-nudge {
+    font-size: 34px;
+    font-weight: bold;
+    color: #000000;
+    margin-top: 16px;
+}
+
+#break-phase.match-break .rest-slot {
+    height: 210px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding-top: 24px;
+}
+
+#break-phase.match-break .rest-countdown {
+    font-size: 80px;
+    line-height: 1.1;
+    color: #000000;
+    font-variant-numeric: tabular-nums;
+}
+
+#break-phase.match-break #rest-wait {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#break-phase.match-break .rest-hint {
+    font-size: 28px;
+    color: #000000;
+    margin-top: 20px;
+}
+
+#break-phase.match-break .rest-more-btn {
+    margin-top: 28px;
+    padding: 12px 34px;
+    font-size: 20px;
+    font-family: inherit;
+    color: #000000;
+    background-color: #ffffff;
+    border: 2px solid #000000;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+#break-phase.match-break .rest-more-btn:hover {
+    background-color: #f0f0f0;
+}
+
+#break-phase.match-break .esc-hint {
+    position: absolute;
+    left: 40px;
+    bottom: 40px;
+    font-size: 20px;
+    color: #555555;
+}
+
+/* ============================================================
+   CLT 专用：实验结束（感谢语）界面
+   匹配 .m 文件 gen_text_screen.py 的 experiment_end 画面
+   ============================================================ */
+#finished-phase.match-end {
+    background-color: #ffffff !important;
+    font-family: 'Microsoft YaHei', 'SimHei', 'PingFang SC', sans-serif;
+    flex-direction: column;
+}
+
+#finished-phase.match-end .end-center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+#finished-phase.match-end .end-thanks {
+    font-size: 44px;
+    color: #000000;
+}
+
+#finished-phase.match-end .end-line {
+    font-size: 32px;
+    color: #000000;
+    margin-top: 34px;
+}
+
+#finished-phase.match-end .end-status {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 40px;
+    text-align: center;
+    font-size: 16px;
+    color: #888888;
+}
