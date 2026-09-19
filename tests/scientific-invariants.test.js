@@ -22,5 +22,6 @@ assert.match(source, /filter\(c => !usedColors\.includes\(c\)\)/);
 assert.match(source, /window\.CLTStorage\.saveTrial\(completedRow\)/);
 assert.match(source, /window\.CLTStorage\.saveCheckpoint/);
 assert.match(source, /window\.CLTStorage\.saveFinalResult/);
+assert.match(source, /currentBlock < prefs\.numBlocks && !p\.debugMode/);
 
 console.log('scientific-invariants.test.js: PASS');
