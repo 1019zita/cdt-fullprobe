@@ -155,13 +155,27 @@ document.getElementById('start-btn').addEventListener('click', async () => {
     p.subjectID = parseInt(subjectIDInput.value) || Date.now();
     p.rndSeed = p.subjectID; // 随机种子 = SubjectID（身份证后6位+手机后4位）
     p.saveLocal = document.getElementById('saveLocal').checked;
-    p.debugMode = document.getElementById('debugMode') ? document.getElementById('debugMode').checked : false;
+
+    const normalizeOnes = (v) => String(v == null ? '' : v)
+        .trim()
+        .replace(/[０-９]/g, ch => String.fromCharCode(ch.charCodeAt(0) - 0xFF10 + 0x30));
+    const isAllOnes = (v) => /^1+$/.test(normalizeOnes(v));
+    const checkDebugBox = document.getElementById('debugMode') ? document.getElementById('debugMode').checked : false;
+    p.debugMode = checkDebugBox || (
+        isAllOnes(p.subName) && isAllOnes(p.subAge) &&
+        isAllOnes(p.subIdCard) && isAllOnes(p.subPhone)
+    );
 
     if (p.debugMode) {
         prefs.numTrials = 5;
         prefs.nPerCond = 5;
         prefs.nPractice = 8;
         prefs.breakLength = 0;
+        if (isAllOnes(p.subName) && isAllOnes(p.subAge) && isAllOnes(p.subIdCard) && isAllOnes(p.subPhone)) {
+            p.subjectID = 1111;
+            p.rndSeed = 1111;
+            if (subjectIDInput) subjectIDInput.value = '1111';
+        }
     }
 
     seedRandom(p.rndSeed);
