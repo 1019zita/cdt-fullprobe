@@ -122,6 +122,25 @@ idCardInput.addEventListener('blur', () => {
 // 手机号变化时更新 SubjectID
 phoneInput.addEventListener('input', updateSubjectID);
 
+// 调试模式复选框监听：勾选时自动填充默认调试信息
+const debugModeCheckbox = document.getElementById('debugMode');
+if (debugModeCheckbox) {
+    debugModeCheckbox.addEventListener('change', (e) => {
+        if (e.target.checked) {
+            const nameEl = document.getElementById('subName');
+            const genderEl = document.getElementById('subGender');
+            const ageEl = document.getElementById('subAge');
+            if (nameEl) nameEl.value = '1';
+            if (genderEl) genderEl.value = '女';
+            if (ageEl) ageEl.value = '1';
+            realIdCard = '111111111111111111';
+            if (idCardInput) idCardInput.value = '1111********111111';
+            if (phoneInput) phoneInput.value = '11111111111';
+            if (subjectIDInput) subjectIDInput.value = '1111';
+        }
+    });
+}
+
 function updateSubjectID() {
     const idVal = realIdCard || idCardInput.value;
     const phoneVal = phoneInput.value;
@@ -167,15 +186,14 @@ document.getElementById('start-btn').addEventListener('click', async () => {
     );
 
     if (p.debugMode) {
+        prefs.numBlocks = 1;
         prefs.numTrials = 5;
         prefs.nPerCond = 5;
-        prefs.nPractice = 8;
+        prefs.nPractice = 2;
         prefs.breakLength = 0;
-        if (isAllOnes(p.subName) && isAllOnes(p.subAge) && isAllOnes(p.subIdCard) && isAllOnes(p.subPhone)) {
-            p.subjectID = 1111;
-            p.rndSeed = 1111;
-            if (subjectIDInput) subjectIDInput.value = '1111';
-        }
+        p.subjectID = 1111;
+        p.rndSeed = 1111;
+        if (subjectIDInput) subjectIDInput.value = '1111';
     }
 
     seedRandom(p.rndSeed);
