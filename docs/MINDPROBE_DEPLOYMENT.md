@@ -6,30 +6,33 @@ GitHub is the source of truth. MindProbe/JATOS is the runtime and result store. 
 
 ## Preflight
 
+`src/storage` is the shared storage template
+([1019zita/jatos-storage-template](https://github.com/1019zita/jatos-storage-template))
+mounted as a git submodule, so the `src/storage/...` paths stay unchanged:
+
 ```powershell
-node --check full_probe.js
+git submodule update --init --recursive
+node --check exp1_fcdt.js
 node --check src/storage/index.js
 node --check src/storage/supabase-storage.js
 node --check src/storage/jatos-storage.js
-node --test tests/storage-adapters.test.js tests/scientific-invariants.test.js
+node --test src/storage/tests/storage-adapters.test.js tests/scientific-invariants.test.js
 python -m unittest tests/test_jatos_scripts.py
 python -m compileall -q scripts
 python scripts/build_study_assets.py
 ```
 
-Check `build/study-assets/build-info.json`, `MANIFEST.sha256`, entry `full_probe.html`, local SheetJS, and absence of Supabase code, secrets, `.env`, and results.
+Check `build/study-assets/build-info.json`, `MANIFEST.sha256`, entry `exp1_fcdt.html`, local SheetJS, and absence of Supabase code, secrets, `.env`, and results.
 
 ## Storage behavior
 
-JATOS records newline-delimited JSON: `session_start`, one `trial` per completed formal response, one `checkpoint` per completed block, and one `final`. Trial writes are queued without changing the 50 ms task transition. Finalization flushes the queue before ending the Study and, when formal trials exist, uploads a participant CSV result file containing the trial rows and session metadata. Practice stays browser-only. Refresh/early exit may preserve partial records but never resumes the task.
+JATOS records newline-delimited JSON: `session_start`, one `trial` per completed formal response, one `checkpoint` per completed block, and one `final`. Trial writes are queued without changing the 50 ms task transition. Finalization flushes the queue before ending the Study. Practice stays browser-only. Refresh/early exit may preserve partial records but never resumes the task.
 
-Trial records contain the original participant fields, including name, phone, and masked ID card. `tired` and `attention` are collected after all trials and are stored in the final record questionnaire payload; the local XLSX retains the original per-row representation.
-
-For acceptance checks, enabling debug mode or entering `1` in the name, age, ID-card, and phone fields selects participant `1111`, runs one block with five formal trials, and skips inter-block rest. This path exercises the same JATOS and local-XLSX finalization code as production; it does not validate the production trial count.
+Trial records contain the original participant fields, including name, phone, and masked ID card. The experiment does not collect any post-task questionnaire data; the local XLSX retains the original per-row representation.
 
 ## Local acceptance and official archive
 
-Create a new local JATOS 3.11.1 Study named `CDT Full-Probe`, one Component with entry `full_probe.html`, and upload `build/study-assets`. Verify normal completion, early exit, exact record counts, XLSX generation, console/network, and result state. Export the Study with JATOS itself and import it into a second clean local instance. Do not hand-build JZIP metadata.
+Create a new local JATOS 3.11.1 Study named `CDT Full-Probe` (JATOS Study 标题为历史命名，与代码层范式名 `exp1_fcdt` 对应), one Component with entry `exp1_fcdt.html`, and upload `build/study-assets`. Verify normal completion, early exit, exact record counts, XLSX generation, console/network, and result state. Export the Study with JATOS itself and import it into a second clean local instance. Do not hand-build JZIP metadata.
 
 ## MindProbe
 
