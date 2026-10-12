@@ -48,10 +48,26 @@ GitHub Pages 启用后，可从仓库首页对应的 Pages 地址进入；`index
 
 ## 版本说明
 
-这是 `Web_Version/exp1_fcdt` 的静态版本（范式名：exp1_fcdt；旧名 `Web_Version/Full_Probe` 仅作历史溯源）。发布准备增加了 Pages 入口、说明文件和忽略规则。
+本目录是仓库 `Web_Version/Full_Probe`（范式名 `exp1_fcdt`；目录名 `Full_Probe` 与 GitHub 仓库名
+`cdt-fullprobe` 都是历史命名，有意不改动）。发布准备增加了 Pages 入口、说明文件和忽略规则。
 2026-10-09 之后按 `exp1_clt` 的改动同步更新了实验设计（set size、呈现时长、试次与 block 结构、
 鼠标作答、休息屏与导出表），详见 `CHANGELOG.md`。色块颜色与位置的选取规则、计分规则与 K 公式保持不变。
 
+## 当前状态（2026-10-12 更新）
+
+- 实验版本 `2.0.0-jatos-m.1`；入口 `exp1_fcdt.html`（原 `full_probe.html`）。
+- **线上已部署**：MindProbe Study `28539 CDT Full-Probe` / Component `48905`，
+  entry 已由 `full_probe.html` 改为 `exp1_fcdt.html`，线上资产与本仓库构建产物逐字节一致
+  （`scripts/jatos_deploy.py assets` 干跑 0 changed）。
+- **生产 smoke test 已完成**：结果 `1268662`，状态 `FINISHED`（18 练习 + 5 正式；console 无 error；
+  JATOS 侧 `session_start` / `trial`×5 / `checkpoint` / `final` / `csv_upload_attempt` / `csv_upload_status` 齐全）。
+- 已部署资产对应 Git commit：`d7f324d`（分支 `migration/jatos-mindprobe`，已合并到 `main`）。
+- 尚未建立 Git release tag。`build/study-assets/build-info.json` 记录构建时的 commit，部署前必须核对。
+
 ## MindProbe/JATOS
 
-迁移分支通过独立 storage adapter 将正式 trial 逐条追加到 JATOS，并在每个 block 写 checkpoint、正常结束写 final。练习数据仍只保留在浏览器内；设备端 XLSX 仍是便利副本。构建和部署说明见 `docs/MINDPROBE_DEPLOYMENT.md`。
+迁移分支通过独立 storage adapter 将正式 trial 逐条追加到 JATOS，并在每个 block 写 checkpoint、正常结束写 final，正常结束时还会把带会话元数据的正式 trial CSV 作为 JATOS result file 上传。练习数据仍只保留在浏览器内；设备端 XLSX 仍是便利副本。构建和部署说明见 `docs/MINDPROBE_DEPLOYMENT.md`。
+
+线上当前运行的是 2026-10-12 部署的 2.0.0（Study `28539`，entry `exp1_fcdt.html`）。旧入口文件
+`full_probe.html` / `full_probe.js` 仍保留在线上，作为回滚路径——把 Component 的 HTML file path
+改回去即可切回 1.0.0。
