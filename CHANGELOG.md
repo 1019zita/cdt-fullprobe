@@ -2,6 +2,14 @@
 
 ## [Unreleased]
 
+### Documentation（2026-10-12，README 改为修正版）
+
+- README 新增「**当前状态（2026-10-12 更新）**」：线上已部署 2.0.0（Study `28539` / Component `48905`，
+  entry `exp1_fcdt.html`，commit `d7f324d`）、生产 smoke 结果 `1268662` `FINISHED`。
+- 修正「版本说明」里把本目录写成 `Web_Version/exp1_fcdt` 的错误——实际目录是 `Web_Version/Full_Probe`，
+  并说明目录名与 GitHub 仓库名 `cdt-fullprobe` 均为历史命名、有意不改动。
+- `MindProbe/JATOS` 一节补充线上当前版本与旧入口文件的回滚用途。
+
 ### Fixed（2026-10-12，进度键名改为与被试绑定：续做在 General 链接下原本永不触发）
 
 MindProbe 实测：**General Single / Multiple 链接下 JATOS 每次运行都分配新的 workerId**
