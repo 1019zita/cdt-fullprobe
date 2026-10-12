@@ -21,9 +21,11 @@ Check `build/study-assets/build-info.json`, `MANIFEST.sha256`, entry `full_probe
 
 ## Storage behavior
 
-JATOS records newline-delimited JSON: `session_start`, one `trial` per completed formal response, one `checkpoint` per completed block, and one `final`. Trial writes are queued without changing the 50 ms task transition. Finalization flushes the queue before ending the Study. Practice stays browser-only. Refresh/early exit may preserve partial records but never resumes the task.
+JATOS records newline-delimited JSON: `session_start`, one `trial` per completed formal response, one `checkpoint` per completed block, and one `final`. Trial writes are queued without changing the 50 ms task transition. Finalization flushes the queue before ending the Study and, when formal trials exist, uploads a participant CSV result file containing the trial rows and session metadata. Practice stays browser-only. Refresh/early exit may preserve partial records but never resumes the task.
 
 Trial records contain the original participant fields, including name, phone, and masked ID card. `tired` and `attention` are collected after all trials and are stored in the final record questionnaire payload; the local XLSX retains the original per-row representation.
+
+For acceptance checks, enabling debug mode or entering `1` in the name, age, ID-card, and phone fields selects participant `1111`, runs one block with five formal trials, and skips inter-block rest. This path exercises the same JATOS and local-XLSX finalization code as production; it does not validate the production trial count.
 
 ## Local acceptance and official archive
 

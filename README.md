@@ -29,4 +29,4 @@ GitHub Pages 启用后，可从仓库首页对应的 Pages 地址进入；`index
 
 ## MindProbe/JATOS
 
-迁移分支通过独立 storage adapter 将正式 trial 逐条追加到 JATOS，并在每个 block 写 checkpoint、正常结束写 final。练习数据仍只保留在浏览器内；设备端 XLSX 仍是便利副本。构建和部署说明见 `docs/MINDPROBE_DEPLOYMENT.md`。
+迁移分支通过独立 storage adapter 将正式 trial 逐条追加到 JATOS，并在每个 block 写 checkpoint、正常结束写 final；正常结束时还会把带会话元数据的正式 trial CSV 作为 JATOS result file 上传。练习数据仍只保留在浏览器内；设备端 XLSX 仍是便利副本。调试模式会自动使用被试编号 `1111`，运行 1 个 block、5 个正式试次并跳过 block 间休息；姓名、年龄、身份证号和手机号全部为 `1` 时也会触发该模式。构建和部署说明见 `docs/MINDPROBE_DEPLOYMENT.md`。
