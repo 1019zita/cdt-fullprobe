@@ -1,0 +1,3 @@
+[submodule "src/storage"]
+	path = src/storage
+	url = https://github.com/1019zita/jatos-storage-template.git

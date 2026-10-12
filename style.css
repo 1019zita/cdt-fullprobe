@@ -218,6 +218,30 @@ body {
     align-items: center;
 }
 
+/* 断点续做提示条：仅在检测到上次未完成进度时显示 */
+#instructions-phase.match-instruct .resume-notice {
+    width: 620px;
+    max-width: 95vw;
+    margin: 18px auto 0;
+    padding: 14px 18px;
+    border: 2px solid #f5c518;
+    border-radius: 8px;
+    background: #fff8e1;
+    text-align: center;
+    font-size: 18px;
+    color: #444;
+}
+
+#instructions-phase.match-instruct .resume-notice p {
+    margin: 0 0 12px;
+}
+
+#instructions-phase.match-instruct .resume-choices {
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+}
+
 #instructions-phase.match-instruct .instruct-diagram {
     width: 620px;
     max-width: 95vw;
@@ -284,21 +308,8 @@ body {
     color: white;
 }
 
-/* 问卷样式 */
-.questionnaire-card h1 {
-    margin-bottom: 20px;
-}
-
-.questionnaire-card p {
-    font-size: 20px;
-    margin-bottom: 15px;
-}
-
-.scale-desc {
-    color: #aaa !important;
-    font-size: 16px !important;
-    margin-bottom: 40px !important;
-}
+/* 问卷样式已删除（2026-10-10 与 exp1_clt 同步去问卷）：
+   .questionnaire-card / .scale-desc 不再被任何 HTML 引用 */
 
 /* 加载动画 */
 .spinner {
